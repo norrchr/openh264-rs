@@ -174,6 +174,7 @@ pub struct EncoderConfig {
     debug: i32,
     data_format: EVideoFormatType,
     max_frame_rate: f32,
+    intra_period: u32,
     rate_control_mode: RateControlMode,
     sps_pps_strategy: SpsPpsStrategy,
     multiple_thread_idc: u16,
@@ -189,6 +190,7 @@ impl EncoderConfig {
             debug: 0,
             data_format: videoFormatI420,
             max_frame_rate: 0.0,
+            intra_period: 0,
             rate_control_mode: Default::default(),
             sps_pps_strategy: Default::default(),
             multiple_thread_idc: 0,
@@ -216,6 +218,12 @@ impl EncoderConfig {
     /// Sets the requested maximum frame rate in Hz.
     pub fn max_frame_rate(mut self, value: f32) -> Self {
         self.max_frame_rate = value;
+        self
+    }
+
+    /// Sets the requested intra period.
+    pub fn intra_period(mut self, value: u32) -> Self {
+        self.intra_period = value;
         self
     }
 
@@ -370,6 +378,7 @@ impl Encoder {
         params.iTargetBitrate = self.config.target_bitrate.try_into()?;
         params.bEnableDenoise = self.config.enable_denoise;
         params.fMaxFrameRate = self.config.max_frame_rate;
+        params.uiIntraPeriod = self.config.intra_period;
         params.eSpsPpsIdStrategy = self.config.sps_pps_strategy.to_c();
         params.iMultipleThreadIdc = self.config.multiple_thread_idc;
 
